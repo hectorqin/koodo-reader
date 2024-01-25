@@ -2,7 +2,6 @@ import React from "react";
 import "./header.css";
 import SearchBox from "../../components/searchBox";
 import ImportLocal from "../../components/importLocal";
-import { Trans } from "react-i18next";
 import { HeaderProps, HeaderState } from "./interface";
 import StorageUtil from "../../utils/serviceUtils/storageUtil";
 import UpdateInfo from "../../components/dialogs/updateDialog";
@@ -11,6 +10,10 @@ import { backup } from "../../utils/syncUtils/backupUtil";
 import { isElectron } from "react-device-detect";
 import { syncData } from "../../utils/syncUtils/common";
 import toast from "react-hot-toast";
+import { Trans } from "react-i18next";
+import { checkStableUpdate } from "../../utils/commonUtil";
+import packageInfo from "../../../package.json";
+
 class Header extends React.Component<HeaderProps, HeaderState> {
   constructor(props: HeaderProps) {
     super(props);
@@ -21,9 +24,12 @@ class Header extends React.Component<HeaderProps, HeaderState> {
       isNewVersion: false,
       width: document.body.clientWidth,
       isdataChange: false,
+      isDeveloperVer: false,
     };
   }
   async componentDidMount() {
+    // isElectron &&
+    //   (await window.require("electron").ipcRenderer.invoke("s3-download"));
     if (isElectron) {
       const fs = window.require("fs");
       const path = window.require("path");
@@ -47,7 +53,16 @@ class Header extends React.Component<HeaderProps, HeaderState> {
           StorageUtil.getReaderConfig("storageLocation")
         );
       }
-
+      try {
+        let stableLog = await checkStableUpdate();
+        if (packageInfo.version.localeCompare(stableLog.version) > 0) {
+          this.setState({ isDeveloperVer: true });
+          // this.props.handleFeedbackDialog(true);
+          // return;
+        }
+      } catch (error) {
+        console.log(error);
+      }
       //Check for data update
       let storageLocation = localStorage.getItem("storageLocation")
         ? localStorage.getItem("storageLocation")
@@ -75,7 +90,6 @@ class Header extends React.Component<HeaderProps, HeaderState> {
         }
       });
     }
-
     window.addEventListener("resize", () => {
       this.setState({ width: document.body.clientWidth });
     });
@@ -135,7 +149,7 @@ class Header extends React.Component<HeaderProps, HeaderState> {
     if (!result) {
       toast.error(this.props.t("Sync Failed"));
     } else {
-      toast.success(this.props.t("Sync Successfully"));
+      toast.success(this.props.t("Synchronisation successful"));
     }
   };
   handleSync = () => {
@@ -189,21 +203,27 @@ class Header extends React.Component<HeaderProps, HeaderState> {
       toast.error(this.props.t("Sync Failed"));
     } else {
       syncData(result as Blob, this.props.books, true);
-      toast.success(this.props.t("Sync Successfully"));
+      toast.success(this.props.t("Synchronisation successful"));
     }
   };
 
   render() {
     return (
-      <div className="header">
+      <div
+        className="header"
+        style={this.props.isCollapsed ? { marginLeft: "40px" } : {}}
+      >
         <div
           className="header-search-container"
-          style={this.props.isCollapsed ? { left: "80px", width: "369px" } : {}}
+          style={this.props.isCollapsed ? { width: "369px" } : {}}
         >
           <SearchBox />
         </div>
 
-        <>
+        <div
+          className="setting-icon-parrent"
+          style={this.props.isCollapsed ? { marginLeft: "430px" } : {}}
+        >
           <div
             className="setting-icon-container"
             onClick={() => {
@@ -212,7 +232,7 @@ class Header extends React.Component<HeaderProps, HeaderState> {
             onMouseLeave={() => {
               this.props.handleSortDisplay(false);
             }}
-            style={{ left: "490px", top: "18px" }}
+            style={{ top: "18px" }}
           >
             <span className="icon-sort-desc header-sort-icon"></span>
           </div>
@@ -224,6 +244,7 @@ class Header extends React.Component<HeaderProps, HeaderState> {
             onMouseLeave={() => {
               this.props.handleAbout(false);
             }}
+            style={{ marginTop: "2px" }}
           >
             <span
               className="icon-setting setting-icon"
@@ -232,6 +253,18 @@ class Header extends React.Component<HeaderProps, HeaderState> {
               }
             ></span>
           </div>
+          <div
+            className="setting-icon-container"
+            onClick={() => {
+              this.props.handleBackupDialog(true);
+            }}
+            onMouseLeave={() => {
+              this.props.handleSortDisplay(false);
+            }}
+            style={{ marginTop: "1px" }}
+          >
+            <span className="icon-archive header-archive-icon"></span>
+          </div>
           {isElectron && (
             <div
               className="setting-icon-container"
@@ -239,7 +272,7 @@ class Header extends React.Component<HeaderProps, HeaderState> {
                 // this.syncFromLocation();
                 this.handleSync();
               }}
-              style={{ left: "635px" }}
+              style={{ marginTop: "2px" }}
             >
               <span
                 className="icon-sync setting-icon"
@@ -249,37 +282,23 @@ class Header extends React.Component<HeaderProps, HeaderState> {
               ></span>
             </div>
           )}
-        </>
-
-        <div
-          className="import-from-cloud"
-          onClick={() => {
-            this.props.handleBackupDialog(true);
-          }}
-          style={
-            this.props.isCollapsed && document.body.clientWidth < 950
-              ? { width: "42px" }
-              : {}
-          }
-        >
-          <div className="animation-mask"></div>
-          {this.props.isCollapsed && this.state.width < 950 ? (
-            <>
-              <span
-                className="icon-share"
-                style={{ fontSize: "15px", fontWeight: 600 }}
-              ></span>
-            </>
-          ) : (
-            <Trans>Backup</Trans>
-          )}
         </div>
+        {this.state.isDeveloperVer && (
+          <div
+            className="header-report-container"
+            onClick={() => {
+              this.props.handleFeedbackDialog(true);
+            }}
+          >
+            <Trans>Report</Trans>
+          </div>
+        )}
         <ImportLocal
           {...{
             handleDrag: this.props.handleDrag,
           }}
         />
-        {isElectron && <UpdateInfo />}
+        <UpdateInfo />
       </div>
     );
   }

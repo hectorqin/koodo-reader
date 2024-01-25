@@ -39,7 +39,7 @@ class Redirect extends React.Component<RedirectProps, RedirectState> {
   componentDidMount() {
     //判断是否是获取token后的回调页面
     let url = document.location.href;
-    if (document.location.hash === "#/") {
+    if (document.location.hash === "#/" && url.indexOf("code") === -1) {
       this.props.history.push("/manager/home");
     }
     if (url.indexOf("error") > -1) {
@@ -74,8 +74,8 @@ class Redirect extends React.Component<RedirectProps, RedirectState> {
             <div className="backup-page-finish-text">
               <Trans>
                 {this.state.isAuthed
-                  ? "Authorize Successfully"
-                  : "Authorize Failed"}
+                  ? "Authorisation successful"
+                  : "Authorisation failed"}
               </Trans>
             </div>
             {this.state.isAuthed ? (
@@ -89,7 +89,7 @@ class Redirect extends React.Component<RedirectProps, RedirectState> {
                 {this.state.isCopied ? (
                   <Trans>Copied</Trans>
                 ) : (
-                  <Trans>Copy Token</Trans>
+                  <Trans>Copy token</Trans>
                 )}
               </div>
             ) : null}
@@ -131,4 +131,4 @@ class Redirect extends React.Component<RedirectProps, RedirectState> {
   }
 }
 
-export default withRouter(Redirect);
+export default withRouter(Redirect as any);

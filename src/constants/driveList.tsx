@@ -1,16 +1,17 @@
-export const config = {
-  callback_url:
+export const driveConfig = {
+  callbackUrl:
     process.env.NODE_ENV === "production"
       ? "https://reader.960960.xyz"
       : "http://localhost:3000",
-  token_url:
-    process.env.NODE_ENV === "production"
-      ? "http://localhost:3366"
-      : "http://localhost:3366",
-  dropbox_client_id: "vnc67byrssocvy1",
-  googledrive_client_id:
-    "99440516227-ifr1ann33f2j610i3ri17ej0i51c7m6e.apps.googleusercontent.com",
-  onedrive_client_id: "ac96f9bf-94f2-49c0-8418-999b919bc236",
+  onedriveAuthUrl: "https://koodo.960960.xyz/api/onedrive_auth",
+  onedriveRefreshUrl: "https://koodo.960960.xyz/api/onedrive_refresh",
+  googleAuthUrl: "https://koodo.960960.xyz/api/google_auth",
+  googleRefreshUrl: "https://koodo.960960.xyz/api/google_refresh",
+  googleScope: "https://www.googleapis.com/auth/drive.appdata",
+  dropboxClientId: "vnc67byrssocvy1",
+  onedriveClientId: "506df58a-29ab-4020-afc5-6f423dc80f35",
+  googleClientId:
+    "1051055003225-ph1f5fvh328dhv7bco5jitlnfhg6ks2t.apps.googleusercontent.com",
 };
 export const driveList = [
   {
@@ -23,25 +24,42 @@ export const driveList = [
     id: 2,
     name: "Dropbox",
     icon: "dropbox",
-    url: `https://www.dropbox.com/oauth2/authorize?response_type=token&client_id=${config.dropbox_client_id}&redirect_uri=${config.callback_url}`,
+    url: `https://www.dropbox.com/oauth2/authorize?response_type=token&client_id=${driveConfig.dropboxClientId}&redirect_uri=${driveConfig.callbackUrl}`,
   },
-
   {
     id: 3,
-    name: "Google Drive",
-    icon: "googledrive",
+    name: "WebDAV",
+    icon: "webdav",
     url: "",
   },
-  // {
-  //   id: 4,
-  //   name: "OneDrive",
-  //   icon: "onedrive",
-  //   url: `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${config.onedrive_client_id}&scope=files.readwrite offline_access&response_type=code&redirect_uri=${config.callback_url}`,
-  // },
+  {
+    id: 4,
+    name: "OneDrive",
+    icon: "onedrive",
+    url: `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${driveConfig.onedriveClientId}&scope=files.readwrite.appfolder offline_access&response_type=code&redirect_uri=${driveConfig.callbackUrl}`,
+  },
   {
     id: 5,
-    name: "WebDav",
-    icon: "webdav",
+    name: "FTP",
+    icon: "ftp",
+    url: "",
+  },
+  {
+    id: 6,
+    name: "SFTP",
+    icon: "sftp",
+    url: "",
+  },
+  {
+    id: 7,
+    name: "Google Drive",
+    icon: "googledrive",
+    url: `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${driveConfig.callbackUrl}&prompt=consent&response_type=code&client_id=${driveConfig.googleClientId}&scope=${driveConfig.googleScope}&access_type=offline`,
+  },
+  {
+    id: 8,
+    name: "S3 Compatible",
+    icon: "s3compatible",
     url: "",
   },
 ];

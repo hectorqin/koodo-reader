@@ -176,7 +176,7 @@ class BookUtil {
           book.name
         }&file=${book.key}`,
         isMergeWord:
-          book.format === "PDF" || book.format === "DJVU"
+          book.format === "PDF"
             ? "no"
             : StorageUtil.getReaderConfig("isMergeWord"),
         isFullscreen: StorageUtil.getReaderConfig("isAutoFullscreen"),
@@ -248,7 +248,7 @@ class BookUtil {
     } else if (format === "EPUB") {
       rendition = new window.Kookit.EpubRender(result, readerMode);
     } else if (format === "TXT") {
-      let text = iconv.decode(Buffer.from(result), "gb2312" || "utf8");
+      let text = iconv.decode(Buffer.from(result), charset || "utf8");
       rendition = new window.Kookit.TxtRender(text, readerMode);
     } else if (format === "MD") {
       rendition = new window.Kookit.MdRender(result, readerMode);
@@ -297,7 +297,7 @@ class BookUtil {
         page: number;
       [name, author, description, publisher, charset, page] = [
         bookName,
-        "Unknown Author",
+        "Unknown author",
         "",
         "",
         "",
@@ -316,7 +316,7 @@ class BookUtil {
           metadata = await getPDFMetadata(copyArrayBuffer(file_content));
           [name, author, publisher, cover, page] = [
             metadata.name || bookName,
-            metadata.author || "Unknown Author",
+            metadata.author || "Unknown author",
             metadata.publisher || "",
             metadata.cover || "",
             metadata.pageCount || 0,
@@ -336,7 +336,7 @@ class BookUtil {
 
           [name, author, description, publisher, cover] = [
             metadata.name || bookName,
-            metadata.author || "Unknown Author",
+            metadata.author || "Unknown author",
             metadata.description || "",
             metadata.publisher || "",
             metadata.cover || "",
@@ -351,7 +351,7 @@ class BookUtil {
           metadata = await rendition.getMetadata();
           [name, author, description, publisher, cover] = [
             metadata.name || bookName,
-            metadata.author || "Unknown Author",
+            metadata.author || "Unknown author",
             metadata.description || "",
             metadata.publisher || "",
             metadata.cover || "",
@@ -361,7 +361,7 @@ class BookUtil {
           metadata = await rendition.getMetadata();
           [name, author, description, publisher, cover] = [
             metadata.name || bookName,
-            metadata.author || "Unknown Author",
+            metadata.author || "Unknown author",
             metadata.description || "",
             metadata.publisher || "",
             metadata.cover || "",

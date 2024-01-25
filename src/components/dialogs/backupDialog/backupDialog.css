@@ -59,12 +59,11 @@
 }
 .backup-page-list-item {
   float: left;
-  width: 130px;
-  height: 100px;
+  width: 93px;
+  height: 93px;
   display: flex;
   justify-content: center;
   align-items: center;
-  opacity: 0.5;
   border-radius: 10px;
   box-sizing: border-box;
   margin-right: 10px;
@@ -80,7 +79,7 @@
 }
 .backup-page-list-title {
   width: 150px !important;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 30px;
   opacity: 1;
   width: 100%;
@@ -95,12 +94,25 @@
 .icon-googledrive {
   font-size: 45px;
 }
-
+.icon-s3compatible {
+  font-size: 60px;
+}
+.icon-ftp {
+  font-size: 65px;
+  position: relative;
+  left: 43px;
+}
+.icon-sftp {
+  font-size: 65px;
+  position: relative;
+  left: 43px;
+}
 .icon-webdav {
   font-size: 35px;
   position: relative;
   left: 40px;
 }
+
 .backup-page-close-icon {
   position: absolute;
   right: 10px;
@@ -188,9 +200,9 @@
 .restore-file {
   position: absolute;
   left: 0px;
-  bottom: 100px;
-  width: 130px;
-  height: 100px;
+  bottom: 105px;
+  width: 93px;
+  height: 93px;
   z-index: 10;
   opacity: 0.5;
   cursor: pointer;

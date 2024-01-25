@@ -9,6 +9,7 @@ import animationNew from "../../../assets/lotties/new.json";
 import animationSuccess from "../../../assets/lotties/success.json";
 import StorageUtil from "../../../utils/serviceUtils/storageUtil";
 import { openExternalUrl } from "../../../utils/serviceUtils/urlUtil";
+import { isElectron } from "react-device-detect";
 const newOptions = {
   loop: false,
   autoplay: true,
@@ -40,13 +41,9 @@ class UpdateInfo extends React.Component<UpdateInfoProps, UpdateInfoState> {
         .get(`https://koodo.960960.xyz/api/update?name=${navigator.language}`)
         .then((res) => {
           const newVersion = res.data.log.version;
-          console.log(
-            res,
-            packageInfo.version,
-            newVersion,
-            packageInfo.version.localeCompare(newVersion)
-          );
-
+          if (!isElectron) {
+            return;
+          }
           setTimeout(() => {
             if (packageInfo.version.localeCompare(newVersion) < 0) {
               if (StorageUtil.getReaderConfig("isDisableUpdate") !== "yes") {
@@ -108,7 +105,7 @@ class UpdateInfo extends React.Component<UpdateInfoProps, UpdateInfoState> {
             >
               <div className="new-version-title">
                 {this.state.isUpdated ? (
-                  <Trans>Update Complete</Trans>
+                  <Trans>Update complete</Trans>
                 ) : (
                   <>
                     <Trans>Update to</Trans>
@@ -156,7 +153,7 @@ class UpdateInfo extends React.Component<UpdateInfoProps, UpdateInfoState> {
                 >
                   {this.state.isUpdated ? (
                     <>
-                      <Trans>Changelog</Trans>
+                      <Trans>Change log</Trans>
                     </>
                   ) : (
                     <Trans>Download</Trans>
@@ -165,7 +162,7 @@ class UpdateInfo extends React.Component<UpdateInfoProps, UpdateInfoState> {
                 {this.state.updateLog && (
                   <>
                     <p className="update-dialog-new-title">
-                      <Trans>What's New</Trans>
+                      <Trans>What's new</Trans>
                     </p>
                     <ul className="update-dialog-new-container">
                       {this.renderList(this.state.updateLog.new)}

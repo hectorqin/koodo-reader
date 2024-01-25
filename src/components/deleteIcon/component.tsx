@@ -38,7 +38,7 @@ class DeleteIcon extends React.Component<DeleteIconProps, DeleteIconStates> {
             .removeItem(this.props.mode)
             .then(() => {
               deleteFunc();
-              toast.success(this.props.t("Delete Successfully"));
+              toast.success(this.props.t("Deletion successful"));
             })
             .catch(() => {
               console.log("删除失败");
@@ -48,7 +48,7 @@ class DeleteIcon extends React.Component<DeleteIconProps, DeleteIconStates> {
             .setItem(this.props.mode, deleteItems)
             .then(() => {
               deleteFunc();
-              toast.success(this.props.t("Delete Successfully"));
+              toast.success(this.props.t("Deletion successful"));
             })
             .catch(() => {
               console.log("修改失败");

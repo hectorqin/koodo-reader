@@ -13,6 +13,30 @@ class ViewMode extends React.Component<ViewModeProps, ViewModeState> {
   handleChange = (mode: string) => {
     StorageUtil.setReaderConfig("viewMode", mode);
     this.props.handleFetchList();
+    setTimeout(() => {
+      this.lazyLoad();
+    }, 0);
+  };
+  lazyLoad = () => {
+    const lazyImages: any = document.querySelectorAll(".lazy-image");
+
+    lazyImages.forEach((lazyImage) => {
+      if (this.isElementInViewport(lazyImage) && lazyImage.dataset.src) {
+        lazyImage.src = lazyImage.dataset.src;
+        lazyImage.classList.remove("lazy-image");
+      }
+    });
+  };
+  isElementInViewport = (element) => {
+    const rect = element.getBoundingClientRect();
+
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <=
+        (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
   };
   render() {
     return (

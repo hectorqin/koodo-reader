@@ -1,14 +1,15 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import translationEN from "./assets/locales/en/translation.json";
-import translationCN from "./assets/locales/cn/translation.json";
-import translationTW from "./assets/locales/tw/translation.json";
+import translationZHCN from "./assets/locales/zh-CN/translation.json";
+import translationZHTW from "./assets/locales/zh-TW/translation.json";
+import translationZHMO from "./assets/locales/zh-MO/translation.json";
 import translationAR from "./assets/locales/ar/translation.json";
 import translationTR from "./assets/locales/tr/translation.json";
 import translationRO from "./assets/locales/ro/translation.json";
 import translationPL from "./assets/locales/pl/translation.json";
 import translationCS from "./assets/locales/cs/translation.json";
-import translationJP from "./assets/locales/jp/translation.json";
+import translationJA from "./assets/locales/ja/translation.json";
 import translationBO from "./assets/locales/bo/translation.json";
 import translationID from "./assets/locales/id/translation.json";
 import translationHY from "./assets/locales/hy/translation.json";
@@ -29,11 +30,14 @@ const resources = {
   en: {
     translation: translationEN,
   },
-  zh: {
-    translation: translationCN,
+  zhCN: {
+    translation: translationZHCN,
   },
-  cht: {
-    translation: translationTW,
+  zhTW: {
+    translation: translationZHTW,
+  },
+  zhMO: {
+    translation: translationZHMO,
   },
   tr: {
     translation: translationTR,
@@ -50,8 +54,8 @@ const resources = {
   cs: {
     translation: translationCS,
   },
-  jp: {
-    translation: translationJP,
+  ja: {
+    translation: translationJA,
   },
   bo: {
     translation: translationBO,

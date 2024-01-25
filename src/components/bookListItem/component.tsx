@@ -24,6 +24,7 @@ class BookListItem extends React.Component<BookItemProps, BookItemState> {
       direction: "horizontal",
       left: 0,
       top: 0,
+      isHover: false,
     };
   }
   componentDidMount() {
@@ -66,7 +67,7 @@ class BookListItem extends React.Component<BookItemProps, BookItemState> {
   handleLoveBook = () => {
     AddFavorite.setFavorite(this.props.book.key);
     this.setState({ isFavorite: true });
-    toast.success(this.props.t("Add Successfully"));
+    toast.success(this.props.t("Addition successful"));
   };
   handleCancelLoveBook = () => {
     AddFavorite.clear(this.props.book.key);
@@ -77,11 +78,11 @@ class BookListItem extends React.Component<BookItemProps, BookItemState> {
     ) {
       this.props.history.push("/manager/empty");
     }
-    toast.success(this.props.t("Cancel Successfully"));
+    toast.success(this.props.t("Cancellation successful"));
   };
   handleRestoreBook = () => {
     AddTrash.clear(this.props.book.key);
-    toast.success(this.props.t("Restore Successfully"));
+    toast.success(this.props.t("Restore successful"));
     this.props.handleFetchBooks();
   };
   handleJump = () => {
@@ -102,7 +103,7 @@ class BookListItem extends React.Component<BookItemProps, BookItemState> {
   handleExportBook() {
     BookUtil.fetchBook(this.props.book.key, true, this.props.book.path).then(
       (result: any) => {
-        toast.success(this.props.t("Export Successfully"));
+        toast.success(this.props.t("Export successful"));
         window.saveAs(
           new Blob([result]),
           this.props.book.name +
@@ -177,6 +178,12 @@ class BookListItem extends React.Component<BookItemProps, BookItemState> {
                 this.handleJump();
               }}
               style={{ height: "65px" }}
+              onMouseEnter={() => {
+                this.setState({ isHover: true });
+              }}
+              onMouseLeave={() => {
+                this.setState({ isHover: false });
+              }}
             >
               <div className="book-item-image" style={{ height: "65px" }}>
                 <EmptyCover
@@ -194,11 +201,17 @@ class BookListItem extends React.Component<BookItemProps, BookItemState> {
               onClick={() => {
                 this.handleJump();
               }}
+              onMouseEnter={() => {
+                this.setState({ isHover: true });
+              }}
+              onMouseLeave={() => {
+                this.setState({ isHover: false });
+              }}
             >
               <img
-                src={this.props.book.cover}
+                data-src={this.props.book.cover}
                 alt=""
-                className="book-item-image"
+                className="lazy-image book-item-image"
                 style={{ width: "100%" }}
                 onLoad={(res: any) => {
                   if (
@@ -213,12 +226,31 @@ class BookListItem extends React.Component<BookItemProps, BookItemState> {
               />
             </div>
           )}
-          {this.props.isSelectBook ? (
+          {this.props.isSelectBook || this.state.isHover ? (
             <span
               className="icon-message book-selected-icon"
+              onMouseEnter={() => {
+                this.setState({ isHover: true });
+              }}
+              onClick={(event) => {
+                if (this.props.isSelectBook) {
+                  this.props.handleSelectedBooks(
+                    this.props.isSelected
+                      ? this.props.selectedBooks.filter(
+                          (item) => item !== this.props.book.key
+                        )
+                      : [...this.props.selectedBooks, this.props.book.key]
+                  );
+                } else {
+                  this.props.handleSelectBook(true);
+                  this.props.handleSelectedBooks([this.props.book.key]);
+                }
+                this.setState({ isHover: false });
+                event?.stopPropagation();
+              }}
               style={
                 this.props.isSelected
-                  ? { left: "20px", bottom: "5px" }
+                  ? { left: "20px", bottom: "5px", opacity: 1 }
                   : { left: "20px", bottom: "5px", color: "#eee" }
               }
             ></span>
@@ -254,7 +286,7 @@ class BookListItem extends React.Component<BookItemProps, BookItemState> {
               <Trans>
                 {this.props.book.author
                   ? this.props.book.author
-                  : "Unknown Author"}
+                  : "Unknown author"}
               </Trans>
             </div>
           </p>

@@ -1,0 +1,37 @@
+name: Submit Translation
+description: Edit current translation or add new languages
+labels: "submit translation"
+body:
+  - type: checkboxes
+    id: guide
+    attributes:
+      label: I've read the translation guide
+      description: https://github.com/koodo-reader/koodo-reader#translation
+      options:
+        - label: "Yes"
+          required: true
+
+  - type: input
+    id: code
+    attributes:
+      label: Language code (Check out this website for more info)
+      description: http://www.lingoes.net/en/translator/langcode.htm
+      placeholder: Language code for the translation
+    validations:
+      required: true
+
+  - type: input
+    id: native
+    attributes:
+      label: The name of this language in your native language
+      placeholder: How to say this language in your native language
+    validations:
+      required: true
+
+  - type: textarea
+    id: translation
+    attributes:
+      label: Translation snippets or file
+      placeholder: You can paste the translation snippets or upload the translation json file here
+    validations:
+      required: true

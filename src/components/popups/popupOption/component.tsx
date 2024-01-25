@@ -15,7 +15,7 @@ import { getHightlightCoords } from "../../../utils/fileUtils/pdfUtil";
 import { getIframeDoc } from "../../../utils/serviceUtils/docUtil";
 import { openExternalUrl } from "../../../utils/serviceUtils/urlUtil";
 import { isElectron } from "react-device-detect";
-import { renderHighlighters } from "../../../utils/serviceUtils/noteUtil";
+import { createOneNote } from "../../../utils/serviceUtils/noteUtil";
 
 declare var window: any;
 
@@ -32,7 +32,7 @@ class PopupOption extends React.Component<PopupOptionProps> {
     let doc = getIframeDoc();
     if (!doc) return;
     doc.getSelection()?.empty();
-    toast.success(this.props.t("Copy Successfully"));
+    toast.success(this.props.t("Copying successful"));
   };
   handleTrans = () => {
     if (!isElectron) {
@@ -115,44 +115,21 @@ class PopupOption extends React.Component<PopupOptionProps> {
     noteArr.push(digest);
     window.localforage.setItem("notes", noteArr).then(() => {
       this.props.handleOpenMenu(false);
-      toast.success(this.props.t("Add Successfully"));
+      toast.success(this.props.t("Addition successful"));
       this.props.handleFetchNotes();
       this.props.handleMenuMode("");
-      this.handleHighlight();
+      createOneNote(
+        digest,
+        this.props.currentBook.format,
+        this.handleNoteClick
+      );
     });
   };
-  handleHighlight = () => {
-    let highlighters: any = this.props.notes;
-    if (!highlighters) return;
-    let highlightersByChapter = highlighters.filter((item: Note) => {
-      if (this.props.currentBook.format !== "PDF") {
-        return (
-          (item.chapter ===
-            this.props.htmlBook.rendition.getChapterDoc()[
-              this.props.chapterDocIndex
-            ].label ||
-            item.chapterIndex === this.props.chapterDocIndex) &&
-          item.bookKey === this.props.currentBook.key
-        );
-      } else {
-        return (
-          item.chapterIndex === this.props.chapterDocIndex &&
-          item.bookKey === this.props.currentBook.key
-        );
-      }
-    });
-    renderHighlighters(
-      highlightersByChapter,
-      this.props.currentBook.format,
-      this.handleNoteClick
-    );
-  };
+
   handleNoteClick = (event: Event) => {
-    if (event && event.target) {
-      this.props.handleNoteKey((event.target as any).dataset.key);
-      this.props.handleMenuMode("note");
-      this.props.handleOpenMenu(true);
-    }
+    this.props.handleNoteKey((event.target as any).dataset.key);
+    this.props.handleMenuMode("note");
+    this.props.handleOpenMenu(true);
   };
   handleJump = (url: string) => {
     openExternalUrl(url);

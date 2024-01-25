@@ -120,7 +120,6 @@ const createMainWin = () => {
     event.returnValue = "success";
   });
   ipcMain.handle("edge-tts", async (event, config) => {
-    console.log(dirPath);
     let { text } = config;
     let audioName = new Date().getTime() + ".webm";
     if (!fs.existsSync(path.join(dirPath, "tts"))) {
@@ -133,6 +132,290 @@ const createMainWin = () => {
     }
 
     return path.join(dirPath, "tts", audioName);
+  });
+  ipcMain.handle("ftp-upload", async (event, config) => {
+    let { url, username, password, fileName, dir, ssl } = config;
+    const Client = require("ftp");
+    let c = new Client();
+    async function uploadFile() {
+      return new Promise((resolve, reject) => {
+        c.on("ready", function () {
+          c.put(
+            path.join(dirPath, fileName),
+            dir + "/" + fileName,
+            function (err) {
+              if (err) reject(err);
+              c.end();
+              resolve(true);
+            }
+          );
+        });
+        c.connect({
+          host: url,
+          user: username,
+          password: password,
+          secure: ssl === "1" ? true : false,
+        });
+      });
+    }
+
+    try {
+      await uploadFile();
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  });
+  ipcMain.handle("ftp-download", async (event, config) => {
+    let { url, username, password, fileName, dir, ssl } = config;
+    const Client = require("ftp");
+    let c = new Client();
+    async function downloadFile() {
+      return new Promise((resolve, reject) => {
+        c.on("ready", function () {
+          c.get(dir + "/" + fileName, function (err, stream) {
+            if (err) reject(err);
+            stream.once("close", function () {
+              c.end();
+              resolve(true);
+            });
+            stream.pipe(fs.createWriteStream(path.join(dirPath, fileName)));
+          });
+        });
+        c.connect({
+          host: url,
+          user: username,
+          password: password,
+          secure: ssl === "1" ? true : false,
+        });
+      });
+    }
+
+    try {
+      await downloadFile();
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  });
+  ipcMain.handle("sftp-upload", async (event, config) => {
+    let { url, username, password, fileName, dir, port } = config;
+    let Client = require("ssh2-sftp-client");
+    let sftp = new Client();
+    async function uploadFile() {
+      return new Promise((resolve, reject) => {
+        let data = fs.createReadStream(path.join(dirPath, fileName));
+        let remote = "/" + dir + "/" + fileName;
+        sftp
+          .connect({
+            host: url,
+            port: port,
+            username: username,
+            password: password,
+          })
+          .then(() => {
+            return sftp.put(data, remote);
+          })
+          .then(() => {
+            resolve(true);
+            return sftp.end();
+          })
+          .catch((err) => {
+            console.error(err.message);
+            resolve(false);
+          });
+      });
+    }
+
+    try {
+      return await uploadFile();
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  });
+  ipcMain.handle("webdav-download", async (event, config) => {
+    let { url, username, password, fileName } = config;
+    const { createClient } = require("webdav");
+    async function downloadFile() {
+      return new Promise(async (resolve, reject) => {
+        const client = createClient(url, {
+          username,
+          password,
+        });
+        if ((await client.exists("/KoodoReader/data.zip")) === false) {
+          resolve(false);
+        }
+        const buffer = await client.getFileContents("/KoodoReader/data.zip");
+        fs.writeFileSync(path.join(dirPath, fileName), buffer);
+        resolve(true);
+      });
+    }
+
+    try {
+      return await downloadFile();
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  });
+  ipcMain.handle("webdav-upload", async (event, config) => {
+    let { url, username, password, fileName } = config;
+    const { createClient } = require("webdav");
+    async function uploadFile() {
+      return new Promise(async (resolve, reject) => {
+        const client = createClient(url, {
+          username,
+          password,
+        });
+        if ((await client.exists("/KoodoReader")) === false) {
+          await client.createDirectory("/KoodoReader");
+        }
+        let writeStream = client.createWriteStream("/KoodoReader/data.zip");
+        fs.createReadStream(path.join(dirPath, fileName)).pipe(writeStream);
+        writeStream.on("finish", () => {
+          resolve(true);
+        });
+        writeStream.on("error", (err) => {
+          console.log(error);
+          resolve(false);
+        });
+      });
+    }
+
+    try {
+      return await uploadFile();
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  });
+  ipcMain.handle("sftp-download", async (event, config) => {
+    let { url, username, password, fileName, dir, port } = config;
+    let Client = require("ssh2-sftp-client");
+    let sftp = new Client();
+    async function downloadFile() {
+      return new Promise((resolve, reject) => {
+        let remotePath = "/" + dir + "/" + fileName;
+        let dst = fs.createWriteStream(path.join(dirPath, fileName));
+        sftp
+          .connect({
+            host: url,
+            port: port,
+            username: username,
+            password: password,
+          })
+          .then(() => {
+            return sftp.get(remotePath, dst);
+          })
+          .then(() => {
+            resolve(true);
+            return sftp.end();
+          })
+          .catch((err) => {
+            console.error(err.message);
+            resolve(false);
+          });
+      });
+    }
+
+    try {
+      return await downloadFile();
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  });
+  ipcMain.handle("s3-upload", async (event, config) => {
+    const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+    let {
+      endpoint,
+      region,
+      bucketName,
+      accessKeyId,
+      secretAccessKey,
+      fileName,
+    } = config;
+    const s3 = new S3Client({
+      endpoint,
+      region,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+    });
+    try {
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: bucketName,
+          Key: fileName,
+          Body: fs.createReadStream(path.join(dirPath, fileName)),
+        })
+      );
+      return true;
+    } catch (err) {
+      console.log("Error: ", err);
+      return false;
+    }
+  });
+  ipcMain.handle("s3-download", async (event, config) => {
+    let {
+      endpoint,
+      region,
+      bucketName,
+      accessKeyId,
+      secretAccessKey,
+      fileName,
+    } = config;
+    const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
+    function getObject(s3, bucket, key, writable) {
+      return new Promise(async (resolve, reject) => {
+        const getObjectCommandOutput = await s3.send(
+          new GetObjectCommand({
+            Bucket: bucket,
+            Key: key,
+          })
+        );
+        if (getObjectCommandOutput.Body) {
+          getObjectCommandOutput.Body.pipe(writable);
+          writable.on("finish", (err) => {
+            if (err) reject(false);
+            resolve(true);
+          });
+        } else {
+          reject(false);
+        }
+      });
+    }
+    async function downloadFile() {
+      return new Promise((resolve, reject) => {
+        const s3 = new S3Client({
+          region,
+          endpoint,
+          credentials: {
+            accessKeyId,
+            secretAccessKey,
+          },
+        });
+        let writeStream = fs.createWriteStream(path.join(dirPath, fileName));
+        getObject(s3, bucketName, fileName, writeStream)
+          .then((data) => {
+            resolve(true);
+          })
+          .catch((err) => {
+            console.error(err);
+            resolve(false);
+          });
+      });
+    }
+    try {
+      return await downloadFile();
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
   });
   ipcMain.handle("clear-tts", async (event, config) => {
     if (!fs.existsSync(path.join(dirPath, "tts"))) {
@@ -155,21 +438,6 @@ const createMainWin = () => {
       properties: ["openDirectory"],
     });
     return path;
-  });
-  ipcMain.handle("get-url-content", async (event, config) => {
-    const axios = require("axios");
-    try {
-      const response = await axios.get(config.url, {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36",
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
   });
   ipcMain.on("storage-location", (event, arg) => {
     event.returnValue = path.join(dirPath, "data");

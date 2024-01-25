@@ -1,11 +1,11 @@
 <div align="left">
 
-[简体中文](https://github.com/troyeguo/koodo-reader/blob/master/README_cn.md) | Português | [English](https://github.com/troyeguo/koodo-reader/blob/master/README.md)
+[简体中文](https://github.com/koodo-reader/koodo-reader/blob/master/README_cn.md) | Português | [English](https://github.com/koodo-reader/koodo-reader/blob/master/README.md)
 
 </div>
 
 <div align="center" >
-  <img src="https://i.loli.net/2021/07/30/ZKNMmz54Q3uqlrW.png" width="96px" height="96px"/>
+  <img src="https://dl.960960.xyz/screenshots/logo.png" width="96px" height="96px"/>
 </div>
 
 <h1 align="center">
@@ -17,22 +17,27 @@
 </h3>
 <div align="center">
 
-[Baixar](https://koodo.960960.xyz/en) | [Pré-visualizar](https://reader.960960.xyz) | [Roadmap](https://troyeguo.notion.site/d1c19a132932465bae1d89dd963c92ea?v=ca8aa69cf25849c18c92b92ba868663b) | [Documento](https://troyeguo.notion.site/Koodo-Reader-Documento-9c767af3d66c459db996bdd08a34c34b)
+[Baixar](https://koodo.960960.xyz/en) | [Pré-visualizar](https://reader.960960.xyz) | [Roadmap](https://koodo.960960.xyz/en/roadmap) | [Documento](https://koodo.960960.xyz/en/document)
 
 </div>
 
 ## Pré-visualizar
 
 <div align="center">
-  <img src="https://i.loli.net/2021/08/08/I37WPYFJcC1jltn.png" >
-  <img src="https://i.loli.net/2021/08/08/G7WvUQFTrEpSCKg.png" >
+  <br/>
+  <kbd><img src="https://dl.960960.xyz/screenshots/1.png" width="800px"></kbd>
+  <br/>
+  <br/>
+  <kbd><img src="https://dl.960960.xyz/screenshots/5.png" width="800px"></kbd>
+  <br/>
+  <br/>
 </div>
 
 ## Características
 
 - Formatos suportados:
   - EPUB (**.epub**)
-  - Documento scaneados (**.pdf**, **.djvu**)
+  - PDF (**.pdf**)
   - Formato sem DRM (**.mobi**) e Kindle (**.azw3**, **.azw**)
   - Texto puro (**.txt**)
   - FictionBook (**.fb2**)
@@ -40,7 +45,7 @@
   - Texto rico (**.md**, **.docx**)
   - Hiper texto (**.html**, **.xml**, **.xhtml**, **.mhtml**, **.htm**, **.htm**)
 - Plataformas suportadas : **Windows**, **macOS**, **Linux** e **Web**
-- Guarde seus dados no **Dropbox** ou **Webdav**
+- Guarde seus dados no **OneDrive**, **Google Drive**, **Dropbox**, **FTP**, **SFTP**, **WebDAV**, **S3**, **S3 compatible**
 - Personalize a pasta de origem e sincronize entre varios dispositivos usando OneDrive, iCloud, Dropbox, etc..
 - Layouts de uma coluna, duas colunas ou de rolagem continua
 - Text para fala, tradução, controles deslizante de progresso, suporte a tela sensível ao toque, importação em lote
@@ -53,7 +58,7 @@
 
 - Versão para computador:
   - Versão estável (Recomendada): [Baixar](https://koodo.960960.xyz/en)
-  - Versão do desenvolvedor: [Baixar](https://github.com/troyeguo/koodo-reader/releases/latest) ( Com novos recursos e correção de bugs, mas podendo ainda conter alguns problemas desconhecidos)
+  - Versão do desenvolvedor: [Baixar](https://github.com/koodo-reader/koodo-reader/releases/latest) ( Com novos recursos e correção de bugs, mas podendo ainda conter alguns problemas desconhecidos)
 - Versão para Web：[Pré-visualizar](https://reader.960960.xyz)
 - Instalar com o Scoop:
 
@@ -93,18 +98,29 @@ flatpak run io.github.troyeguo.koodo-reader
 
 <div align="center">
   <b>Modo em lista</b>
-  <img src="https://i.loli.net/2021/08/08/JyNHfThMs184Um2.png" >
+  <br/>
+  <br/>
+  <kbd><img src="https://dl.960960.xyz/screenshots/2.png" width="800px"></kbd>
+  <br/>
+  <br/>
   <b>Modo de capa</b>
-  <img src="https://i.loli.net/2021/08/08/76zkDEAobd4qsmR.png" >
+  <br/>
+  <br/>
+  <kbd><img src="https://dl.960960.xyz/screenshots/3.png" width="800px"></kbd>
+  <br/>
+  <br/>
   <b>Opções de leitura</b>
-  <img src="https://i.loli.net/2021/08/08/LeEN9gnOvFmfVWA.png" >
-  <b>Cópia de segurança e restauração</b>
-  <img src="https://i.loli.net/2021/08/08/aRIAiYT2dGJQhC1.png" >
+  <br/>
+  <br/>
+  <kbd><img src="https://dl.960960.xyz/screenshots/6.png" width="800px"></kbd>
+  <br/>
+  <br/>
   <b>Modo escuro e cores do tema</b>
-  <img src="https://i.loli.net/2021/08/08/ynqUNpX93xZefdw.png" >
-  <b>Gerenciamento de notas</b>
-  <img src="https://i.loli.net/2021/08/09/sARQBoefvGklHwC.png" >
-
+  <br/>
+  <br/>
+  <kbd><img src="https://dl.960960.xyz/screenshots/4.png" width="800px"></kbd>
+  <br/>
+  <br/>
 </div>
 
 </div>
@@ -116,7 +132,7 @@ Certifique-se de ter instalado yarn e git, a versão.
 1. Baixe o repositório
 
    ```
-   git clone https://github.com/troyeguo/koodo-reader.git
+   git clone https://github.com/koodo-reader/koodo-reader.git
    ```
 
 2. Entre no modo desktop
@@ -132,7 +148,3 @@ Certifique-se de ter instalado yarn e git, a versão.
    yarn
    yarn start
    ```
-
-## Traduções
-
-Koodo Reader usa o POEditor para gerenciar as localizações, Visite [aqui](https://poeditor.com/join/project?hash=fk4qbQTlsk) para editar a tradução atual ou adicionar um novo idioma

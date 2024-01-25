@@ -1,0 +1,21 @@
+name: Download and Upload Release Files
+
+on:
+  push:
+    paths:
+      - ".github/workflows/upload.yml" # 指定要监视的文件路径
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run custom script
+        run: |
+          curl -O https://raw.githubusercontent.com/koodo-reader/koodo-reader/master/src/upload.sh
+          chmod +x ./upload.sh
+          ./upload.sh ${{ secrets.B2_ACCOUNT_ID }} ${{ secrets.B2_APPLICATION_KEY }} ${{ secrets.R2_ACCOUNT_ID }} ${{ secrets.R2_APPLICATION_KEY }} ${{ secrets.R2_ENDPOINT }} v1.6.3
+        shell: bash

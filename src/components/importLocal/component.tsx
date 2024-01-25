@@ -124,7 +124,7 @@ class ImportLocal extends React.Component<ImportLocalProps, ImportLocalState> {
             let shelfTitles = Object.keys(ShelfUtil.getShelf());
             ShelfUtil.setShelf(shelfTitles[this.props.shelfIndex], book.key);
           }
-          toast.success(this.props.t("Add Successfully"));
+          toast.success(this.props.t("Addition successful"));
           setTimeout(() => {
             this.state.isOpenFile && this.handleJump(book);
             if (
@@ -140,7 +140,7 @@ class ImportLocal extends React.Component<ImportLocalProps, ImportLocalState> {
           return resolve();
         })
         .catch(() => {
-          toast.error(this.props.t("Import Failed"));
+          toast.error(this.props.t("Import failed"));
           return resolve();
         });
     });
@@ -151,7 +151,7 @@ class ImportLocal extends React.Component<ImportLocalProps, ImportLocalState> {
     return new Promise<void>(async (resolve, reject) => {
       const md5 = await fetchMD5(file);
       if (!md5) {
-        toast.error(this.props.t("Import Failed"));
+        toast.error(this.props.t("Import failed"));
         return resolve();
       } else {
         await this.handleBook(file, md5);
@@ -170,18 +170,23 @@ class ImportLocal extends React.Component<ImportLocalProps, ImportLocalState> {
     return new Promise<void>((resolve, reject) => {
       //md5重复不导入
       let isRepeat = false;
-      if (
-        [...(this.props.books || []), ...this.props.deletedBooks].length > 0
-      ) {
-        [...(this.props.books || []), ...this.props.deletedBooks].forEach(
-          (item) => {
-            if (item.md5 === md5 && item.size === file.size) {
-              isRepeat = true;
-              toast.error(this.props.t("Duplicate Book"));
-              return resolve();
-            }
+      if (this.props.books.length > 0) {
+        this.props.books.forEach((item) => {
+          if (item.md5 === md5 && item.size === file.size) {
+            isRepeat = true;
+            toast.error(this.props.t("Duplicate book"));
+            return resolve();
           }
-        );
+        });
+      }
+      if (this.props.deletedBooks.length > 0) {
+        this.props.deletedBooks.forEach((item) => {
+          if (item.md5 === md5 && item.size === file.size) {
+            isRepeat = true;
+            toast.error(this.props.t("Duplicate book in trash bin"));
+            return resolve();
+          }
+        });
       }
       //解析图书，获取图书数据
       if (!isRepeat) {
@@ -190,7 +195,7 @@ class ImportLocal extends React.Component<ImportLocalProps, ImportLocalState> {
 
         reader.onload = async (e) => {
           if (!e.target) {
-            toast.error(this.props.t("Import Failed"));
+            toast.error(this.props.t("Import failed"));
             return resolve();
           }
           let reader = new FileReader();
@@ -206,7 +211,7 @@ class ImportLocal extends React.Component<ImportLocalProps, ImportLocalState> {
             );
             clickFilePath = "";
             if (result === "get_metadata_error") {
-              toast.error(this.props.t("Import Failed"));
+              toast.error(this.props.t("Import failed"));
               return resolve();
             }
             await this.handleAddBook(
@@ -234,7 +239,6 @@ class ImportLocal extends React.Component<ImportLocalProps, ImportLocalState> {
         accept={[
           ".epub",
           ".pdf",
-          ".djvu",
           ".txt",
           ".mobi",
           ".azw3",
